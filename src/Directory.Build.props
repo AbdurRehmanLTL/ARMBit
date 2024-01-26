@@ -10,8 +10,8 @@
 
         <NeutralLanguage>en-US</NeutralLanguage>
         <MultilingualEnabled>true</MultilingualEnabled>
-        <PwaEnabled>false</PwaEnabled>
-        <BlazorWebAssemblyStandalone>false</BlazorWebAssemblyStandalone>
+        <PwaEnabled>true</PwaEnabled>
+        <BlazorWebAssemblyStandalone>true</BlazorWebAssemblyStandalone>
         <!-- By enabling the BlazorWebAssemblyStandalone option, you gain the ability to
         deploy your Client.Web project on platforms such as GitHub/Cloudflare Pages and Azure Static Web Apps. -->
 
