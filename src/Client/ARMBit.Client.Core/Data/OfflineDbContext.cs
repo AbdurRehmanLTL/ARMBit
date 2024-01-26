@@ -1,0 +1,49 @@
+﻿using ARMBit.Shared.Dtos.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+namespace ARMBit.Client.Core.Data;
+
+public class OfflineDbContext(DbContextOptions<OfflineDbContext> options) : DbContext(options)
+{
+    static OfflineDbContext()
+    {
+        if (OperatingSystem.IsBrowser())
+        {
+            AppContext.SetSwitch("Microsoft.EntityFrameworkCore.Issue31751", true);
+        }
+    }
+
+    public virtual DbSet<UserDto> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserDto>()
+            .HasData([new()
+            {
+                Id = 1,
+                UserName= "test@bitplatform.dev",
+                Email = "test@bitplatform.dev",
+                Password = "123456",
+                FullName = "ARMBit test account"
+            }]);
+
+        base.OnModelCreating(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            // .UseModel(OfflineDbContextModel.Instance)
+            .UseSqlite("Data Source=ARMBit-ClientDb.db");
+
+        base.OnConfiguring(optionsBuilder);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        // SQLite does not support expressions of type 'DateTimeOffset' in ORDER BY clauses. Convert the values to a supported type:
+        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetToBinaryConverter>();
+        configurationBuilder.Properties<DateTimeOffset?>().HaveConversion<DateTimeOffsetToBinaryConverter>();
+    }
+}
